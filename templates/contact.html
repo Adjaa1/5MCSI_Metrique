@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulaire de contact</title>
 </head>
-<body style="background-color:rgb(41,81,99);">
-
+<body style="background-color:rgb(88,175,214);">
+<div text-align:center>
 <h2>Contactez-nous</h2>
+</div>
+  <form style="margin: auto; width: 300px;">
+    <label for="name" style="font-size: 18px;">Nom:</label><br>
+    <input type="text" id="name" name="name" cols="150" required><br><br>
 
-  <form style="margin: auto; width: 220px;">
-    <label for="name">Nom:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+    <label for="email" style="font-size: 18px;>Adresse e-mail:</label><br>
+    <input type="email" id="email" name="email" cols="150" required ><br><br>
 
-    <label for="email">Adresse e-mail:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="message">Message:</label><br>
-    <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+    <label for="message" style="font-size: 18px;>Message:</label><br>
+    <textarea id="message" name="message" rows="5" cols="150" required></textarea><br><br>
 
     <input type="submit" value="Envoyer">
 </form>
