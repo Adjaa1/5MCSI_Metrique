@@ -33,33 +33,9 @@ def meteo():
 def mongraphique():
     return render_template("graphique.html")
 
-@app.route('/extract-minutes/<date_string>')
-def extract_minutes(date_string):
-    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-    minutes = date_object.minute
-    return jsonify({'minutes': minutes})
-
 @app.route('/commits/')
 def commits_graph():
-    url = 'https://api.github.com/repos/Adjaa1/5MCSI_Metrique/commits'
-    response = urllib.request.urlopen(url)
-    commits_data = json.loads(response.read())
-
-    commits_per_minute = {}
-
-    for commit in commits_data:
-        date_string = commit['commit']['author']['date']
-        minute = extract_minutes(date_string)['minutes']
-
-        if minute in commits_per_minute:
-            commits_per_minute[minute] += 1
-        else:
-            commits_per_minute[minute] = 1
-
-    minutes = list(commits_per_minute.keys())
-    commit_counts = list(commits_per_minute.values())
-
-    return jsonify({'minutes': minutes, 'commit_counts': commit_counts})
+    return render_template("commits.html")
 
   
 if __name__ == "__main__":
