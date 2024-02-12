@@ -1,58 +1,40 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histogramme des Températures</title>
-    <!-- Inclure la bibliothèque Google Charts -->
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Metrique</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            // Récupérer les données des températures depuis l'API OpenWeatherMap
-            fetch('https://samples.openweathermap.org/data/2.5/forecast?lat=0&lon=0&appid=xxx')
-                .then(response => response.json())
-                .then(data => {
-                    // Extraire les températures de l'ensemble de données
-                    const temperatures = data.list.map(entry => entry.main.temp);
-
-                    // Créer un tableau de données pour Google Charts
-                    const dataTable = new google.visualization.DataTable();
-                    dataTable.addColumn('string', 'Température');
-                    dataTable.addColumn('number', 'Fréquence');
-
-                    // Compter les occurrences de chaque température
-                    const temperatureCounts = {};
-                    temperatures.forEach(temp => {
-                        const roundedTemp = Math.round(temp);
-                        temperatureCounts[roundedTemp] = (temperatureCounts[roundedTemp] || 0) + 1;
-                    });
-
-                    // Ajouter les données au tableau
-                    Object.keys(temperatureCounts).forEach(temp => {
-                        dataTable.addRow([temp.toString(), temperatureCounts[temp]]);
-                    });
-
-                    // Options du graphique
-                    var options = {
-                        title: 'Histogramme des Températures',
-                        legend: { position: 'none' },
-                        vAxis: { title: 'Fréquence' }
-                    };
-
-                    // Créer et afficher le graphique
-                    var chart = new google.visualization.ColumnChart(document.getElementById('histogramme'));
-                    chart.draw(dataTable, options);
-                })
-                .catch(error => console.error('Erreur lors de la récupération des données:', error));
-        }
+  </head>
+  <body>
+    <div id="chart_div"></div>
+    <script>
+      google.charts.load('current', { packages: ['corechart'] });
+      google.charts.setOnLoadCallback(drawBackgroundColor);
+     function drawBackgroundColor() {
+    function drawChart(data) {
+    // Convertir les données récupérées en un tableau utilisable par Google Charts
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn('string', 'Date');
+    dataTable.addColumn('number', 'Valeur');
+    data.results.forEach(entry => {
+      var date = new Date(entry.Jour * 1000);
+      dataTable.addRow([date.toLocaleDateString(), entry.temp]);
+    });
+    // Configurer les options du graphique en ligne
+    var options = {
+      title: 'Évolution des températures de Paris pour les 16 prochains jours',
+      curveType: 'function',
+      legend: { position: 'bottom' }
+    };
+    var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+  // Récupération de données depuis notre API /paris/
+  fetch('/paris/')
+    .then(response => response.json())
+    .then(data => {
+      drawChart(data);
+    })
+}
     </script>
-</head>
-<body>
-    <h1>Histogramme des Températures</h1>
-    <!-- Div pour le graphique -->
-    <div id="histogramme" style="width: 900px; height: 500px;"></div>
-</body>
+  </body>
 </html>
