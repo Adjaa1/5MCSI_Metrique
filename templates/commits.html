@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphique des Commits</title>
+    <!-- Inclure la bibliothèque Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Graphique des Commits</h1>
+    <!-- Div pour le graphique -->
+    <canvas id="commitsChart"></canvas>
 
+    <script>
+        // Fonction pour récupérer les données des commits depuis l'API GitHub
+        async function fetchCommitsData() {
+            const response = await fetch('https://api.github.com/repos/Adjaa1/5MCSI_Metrique/commits');
+            const data = await response.json();
+            return data;
+        }
+
+        // Fonction pour extraire les minutes d'une date formatée
+        function extractMinutes(dateString) {
+            const dateObject = new Date(dateString);
+            return dateObject.getMinutes();
+        }
+
+        // Fonction pour créer et afficher le graphique
+        async function createChart() {
+            // Récupérer les données des commits
+            const commitsData = await fetchCommitsData();
+
+            // Initialiser un objet pour stocker le nombre de commits par minute
+            const commitsPerMinute = {};
+
+            // Parcourir les données des commits
+            commitsData.forEach(commit => {
+                const date = commit.commit.author.date;
+                const minute = extractMinutes(date);
+
+                // Ajouter le commit à la minute correspondante
+                if (commitsPerMinute[minute]) {
+                    commitsPerMinute[minute]++;
+                } else {
+                    commitsPerMinute[minute] = 1;
+                }
+            });
+
+            // Extraire les minutes et le nombre de commits pour le graphique
+            const minutes = Object.keys(commitsPerMinute);
+            const commitCounts = Object.values(commitsPerMinute);
+
+            // Créer le graphique
+            var ctx = document.getElementById('commitsChart').getContext('2d');
+            var commitsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: minutes,
+                    datasets: [{
+                        label: 'Commits par Minute',
+                        data: commitCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Appeler la fonction pour créer le graphique au chargement de la page
+        window.onload = createChart;
+    </script>
+</body>
+</html>
