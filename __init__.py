@@ -31,6 +31,11 @@ def meteo():
 @app.route("/rapport/")
 def mongraphique():
     return render_template("graphique.html")
+
+
+@app.route("/commits/")
+def commits():
+    return render_template("commits.html")
   
 if __name__ == "__main__":
   app.run(debug=True)
